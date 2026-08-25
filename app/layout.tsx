@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { Sidebar } from "@/components/Sidebar";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "vibe-stack-supabase",
-  description: "Next.js + Supabase starter",
+  title: "ReadAct",
+  description: "Turn what you read into tracked, actionable steps.",
 };
 
 export default function RootLayout({
@@ -13,7 +14,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased text-neutral-900">
+        <div className="flex min-h-screen flex-col md:flex-row">
+          <Sidebar />
+          <main className="flex-1 min-w-0">{children}</main>
+        </div>
+      </body>
     </html>
   );
 }

@@ -1,21 +1,65 @@
-export default function Home() {
+import { Suspense } from "react";
+import { getEntries } from "@/lib/data/entries";
+import { EntryCard } from "@/components/EntryCard";
+import { NewEntryForm } from "@/components/NewEntryForm";
+
+function EntrySkeleton() {
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-xl text-center space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">vibe-stack-supabase</h1>
-        <p className="text-neutral-500">
-          Edit{" "}
-          <code className="bg-neutral-100 px-1.5 py-0.5 rounded text-sm">
-            app/page.tsx
-          </code>{" "}
-          to start building.
-        </p>
-        <p className="text-xs text-neutral-400">
-          See{" "}
-          <code className="bg-neutral-100 px-1.5 py-0.5 rounded">CLAUDE.md</code>{" "}
-          for project conventions and gstack workflow.
-        </p>
+    <div className="grid gap-3 sm:grid-cols-2">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          className="h-32 animate-pulse rounded-lg border border-neutral-200 bg-neutral-50"
+        />
+      ))}
+    </div>
+  );
+}
+
+async function EntryList() {
+  let entries;
+  try {
+    entries = await getEntries();
+  } catch {
+    return (
+      <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        Couldn't load entries. Check your connection and retry.
+      </p>
+    );
+  }
+
+  if (entries.length === 0) {
+    return (
+      <p className="rounded-md border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
+        No entries yet. Add your first book or article.
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {entries.map((entry) => (
+        <EntryCard key={entry.id} entry={entry} />
+      ))}
+    </div>
+  );
+}
+
+export default function EntriesPage() {
+  return (
+    <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Entries</h1>
+          <p className="text-sm text-neutral-500">
+            Log what you read, extract the key points, act on them.
+          </p>
+        </div>
       </div>
-    </main>
+      <NewEntryForm />
+      <Suspense fallback={<EntrySkeleton />}>
+        <EntryList />
+      </Suspense>
+    </div>
   );
 }
