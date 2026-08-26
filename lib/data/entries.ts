@@ -6,11 +6,35 @@ import type {
   KeyPointWithActions,
 } from "@/lib/types";
 
+export async function getCurrentUserId(): Promise<string | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
+
 export async function getEntries(): Promise<Entry[]> {
+  const supabase = await createClient();
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
+  const { data, error } = await supabase
+    .from("entries")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function getDemoEntries(): Promise<Entry[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("entries")
     .select("*")
+    .is("user_id", null)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
@@ -93,12 +117,15 @@ export async function getEntryCompletionStats(
 
 export async function getAllActionSteps(): Promise<ActionStepWithContext[]> {
   const supabase = await createClient();
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
 
   const { data, error } = await supabase
     .from("action_steps")
     .select(
       "*, key_points!inner(content, entry_id, entries!inner(id, title))",
     )
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);

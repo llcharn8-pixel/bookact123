@@ -2,13 +2,19 @@ import Link from "next/link";
 import type { Entry } from "@/lib/types";
 import { getEntryCompletionStats } from "@/lib/data/entries";
 
-export async function EntryCard({ entry }: { entry: Entry }) {
+export async function EntryCard({
+  entry,
+  basePath = "/entries",
+}: {
+  entry: Entry;
+  basePath?: string;
+}) {
   const { total, done } = await getEntryCompletionStats(entry.id);
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
   return (
     <Link
-      href={`/entries/${entry.id}`}
+      href={`${basePath}/${entry.id}`}
       className="block rounded-lg border border-neutral-200 p-4 transition-colors hover:border-neutral-400"
     >
       <div className="flex items-start justify-between gap-3">

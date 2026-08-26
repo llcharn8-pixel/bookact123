@@ -11,6 +11,15 @@ function fail(message: string): ActionResult {
   return { error: message };
 }
 
+async function requireUserId(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+): Promise<string | null> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
+
 // ── Entries ─────────────────────────────────────────────────────────────
 
 export async function createEntry(
@@ -25,7 +34,11 @@ export async function createEntry(
   if (!title) return fail("Title is required.");
 
   const supabase = await createClient();
+  const userId = await requireUserId(supabase);
+  if (!userId) return fail("You must be logged in.");
+
   const { error } = await supabase.from("entries").insert({
+    user_id: userId,
     title,
     type,
     author: author || null,
@@ -81,9 +94,12 @@ export async function createKeyPoint(
   if (!content) return fail("Key point text is required.");
 
   const supabase = await createClient();
+  const userId = await requireUserId(supabase);
+  if (!userId) return fail("You must be logged in.");
+
   const { error } = await supabase
     .from("key_points")
-    .insert({ entry_id: entryId, content });
+    .insert({ entry_id: entryId, content, user_id: userId });
 
   if (error) return fail("Couldn't save. Check your connection and retry.");
 
@@ -137,10 +153,14 @@ export async function createActionStep(
   if (!action) return fail("Action text is required.");
 
   const supabase = await createClient();
+  const userId = await requireUserId(supabase);
+  if (!userId) return fail("You must be logged in.");
+
   const { error } = await supabase.from("action_steps").insert({
     key_point_id: keyPointId,
     action,
     achievable_result: achievable_result || null,
+    user_id: userId,
   });
 
   if (error) return fail("Couldn't save. Check your connection and retry.");
