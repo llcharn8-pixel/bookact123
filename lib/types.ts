@@ -11,11 +11,15 @@ export type Entry = {
   created_at: string;
 };
 
+export type Source = "human" | "ai";
+
 export type KeyPoint = {
   id: string;
   user_id: string | null;
   entry_id: string;
   content: string;
+  source: Source;
+  ai_confidence: number | null;
   created_at: string;
 };
 
@@ -26,7 +30,21 @@ export type ActionStep = {
   action: string;
   achievable_result: string | null;
   status: ActionStatus;
+  source: Source;
+  ai_confidence: number | null;
   created_at: string;
+};
+
+export type DraftActionStep = {
+  action: string;
+  achievable_result: string | null;
+  confidence: number;
+};
+
+export type DraftKeyPoint = {
+  content: string;
+  confidence: number;
+  action_steps: DraftActionStep[];
 };
 
 export type KeyPointWithActions = KeyPoint & { action_steps: ActionStep[] };

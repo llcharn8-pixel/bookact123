@@ -3,6 +3,7 @@ import { getEntryWithDetails } from "@/lib/data/entries";
 import { EntryHeader } from "@/components/EntryHeader";
 import { KeyPointItem } from "@/components/KeyPointItem";
 import { NewKeyPointForm } from "@/components/NewKeyPointForm";
+import { AIKeyPointSuggester } from "@/components/AIKeyPointSuggester";
 
 export default async function EntryDetailPage({
   params,
@@ -34,6 +35,8 @@ export default async function EntryDetailPage({
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Key Points</h2>
         </div>
+
+        <AIKeyPointSuggester entryId={entry.id} summary={entry.summary} />
 
         {entry.key_points.length === 0 ? (
           <p className="rounded-md border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500">

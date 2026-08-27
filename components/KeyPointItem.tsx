@@ -75,7 +75,14 @@ export function KeyPointItem({
         </form>
       ) : (
         <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-medium">{keyPoint.content}</p>
+          <p className="text-sm font-medium">
+            {keyPoint.content}
+            {keyPoint.source === "ai" && (
+              <span className="ml-2 rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-medium uppercase text-violet-700">
+                AI
+              </span>
+            )}
+          </p>
           <div className="flex shrink-0 gap-2">
             <button
               type="button"

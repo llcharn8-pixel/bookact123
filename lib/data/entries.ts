@@ -137,6 +137,8 @@ export async function getAllActionSteps(): Promise<ActionStepWithContext[]> {
     action: string;
     achievable_result: string | null;
     status: "todo" | "doing" | "done";
+    source: "human" | "ai";
+    ai_confidence: number | null;
     created_at: string;
     key_points: {
       content: string;
@@ -152,6 +154,8 @@ export async function getAllActionSteps(): Promise<ActionStepWithContext[]> {
     action: row.action,
     achievable_result: row.achievable_result,
     status: row.status,
+    source: row.source,
+    ai_confidence: row.ai_confidence,
     created_at: row.created_at,
     key_point_content: row.key_points.content,
     entry_id: row.key_points.entry_id,
