@@ -47,6 +47,15 @@ export type DraftKeyPoint = {
   action_steps: DraftActionStep[];
 };
 
+export type DraftEntry = {
+  title: string;
+  author: string | null;
+  type: EntryType;
+  summary: string;
+  grounded: boolean;
+  key_points: DraftKeyPoint[];
+};
+
 export type KeyPointWithActions = KeyPoint & { action_steps: ActionStep[] };
 export type EntryWithDetails = Entry & { key_points: KeyPointWithActions[] };
 

@@ -2,6 +2,9 @@ import { Suspense } from "react";
 import { getEntries } from "@/lib/data/entries";
 import { EntryCard } from "@/components/EntryCard";
 import { NewEntryForm } from "@/components/NewEntryForm";
+import { SmartAssistant } from "@/components/SmartAssistant";
+
+export const maxDuration = 60;
 
 function EntrySkeleton() {
   return (
@@ -58,7 +61,10 @@ export default function EntriesPage() {
           </p>
         </div>
       </div>
-      <NewEntryForm />
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <NewEntryForm />
+        <SmartAssistant />
+      </div>
       <Suspense fallback={<EntrySkeleton />}>
         <EntryList />
       </Suspense>
