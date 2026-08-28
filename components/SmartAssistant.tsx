@@ -45,19 +45,23 @@ export function SmartAssistant() {
     }
 
     setLoading(true);
-    const result = await readWithAssistant(
-      mode === "url"
-        ? { mode: "url", url: url.trim() }
-        : { mode: "title", title: title.trim(), author: author.trim() },
-    );
-    setLoading(false);
-
-    if (result.error || !result.draft) {
-      setError(result.error ?? "Something went wrong.");
-      return;
+    try {
+      const result = await readWithAssistant(
+        mode === "url"
+          ? { mode: "url", url: url.trim() }
+          : { mode: "title", title: title.trim(), author: author.trim() },
+      );
+      if (result.error || !result.draft) {
+        setError(result.error ?? "Something went wrong.");
+        return;
+      }
+      setDraft(result.draft);
+      setSelected(new Set(result.draft.key_points.map((_, i) => i)));
+    } catch {
+      setError("The assistant took too long or the connection dropped. Try again.");
+    } finally {
+      setLoading(false);
     }
-    setDraft(result.draft);
-    setSelected(new Set(result.draft.key_points.map((_, i) => i)));
   }
 
   function toggle(i: number) {
@@ -73,12 +77,27 @@ export function SmartAssistant() {
     if (!draft) return;
     setCreating(true);
     setError(null);
-    const result = await createEntryFromAssistantDraft(draft, [...selected]);
-    if (result?.error) {
+    try {
+      const result = await createEntryFromAssistantDraft(draft, [...selected]);
+      if (result?.error) {
+        setCreating(false);
+        setError(result.error);
+      }
+      // On success the server action redirects; component unmounts.
+    } catch (err) {
+      // next/navigation's redirect() throws internally — let that propagate.
+      if (
+        err &&
+        typeof err === "object" &&
+        "digest" in err &&
+        typeof err.digest === "string" &&
+        err.digest.startsWith("NEXT_REDIRECT")
+      ) {
+        throw err;
+      }
       setCreating(false);
-      setError(result.error);
+      setError("Couldn't create the entry. Try again.");
     }
-    // On success the server action redirects; component unmounts.
   }
 
   if (!open) {
@@ -208,6 +227,11 @@ export function SmartAssistant() {
       )}
 
       {error && <p className="text-xs text-red-600">{error}</p>}
+      {loading && (
+        <p className="text-xs text-ink-faint">
+          This can take up to a minute for longer pages — please wait.
+        </p>
+      )}
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <button

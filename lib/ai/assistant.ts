@@ -27,7 +27,7 @@ async function callOpenRouter(system: string, user: string): Promise<string> {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 50000);
+  const timeout = setTimeout(() => controller.abort(), 55000);
 
   let response: Response;
   try {
@@ -45,7 +45,7 @@ async function callOpenRouter(system: string, user: string): Promise<string> {
           { role: "user", content: user },
         ],
         response_format: { type: "json_object" },
-        max_tokens: 2000,
+        max_tokens: 1200,
         reasoning: { enabled: false },
       }),
     });
@@ -169,7 +169,7 @@ async function fetchReadableText(url: string): Promise<string> {
     );
   }
 
-  return text.slice(0, 10000);
+  return text.slice(0, 6000);
 }
 
 export async function readFromUrl(url: string): Promise<DraftEntry> {
