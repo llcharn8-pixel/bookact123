@@ -9,7 +9,7 @@ function EntrySkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="h-32 animate-pulse rounded-lg border border-neutral-200 bg-neutral-50"
+          className="h-32 animate-pulse rounded-xl border border-border-soft bg-surface-muted"
         />
       ))}
     </div>
@@ -22,7 +22,7 @@ async function EntryList() {
     entries = await getEntries();
   } catch {
     return (
-      <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <p className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
         Couldn't load entries. Check your connection and retry.
       </p>
     );
@@ -30,7 +30,7 @@ async function EntryList() {
 
   if (entries.length === 0) {
     return (
-      <p className="rounded-md border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
+      <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-ink-soft">
         No entries yet. Add your first book or article.
       </p>
     );
@@ -50,8 +50,10 @@ export default function EntriesPage() {
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Entries</h1>
-          <p className="text-sm text-neutral-500">
+          <h1 className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+            Entries
+          </h1>
+          <p className="text-sm text-ink-soft">
             Log what you read, extract the key points, act on them.
           </p>
         </div>

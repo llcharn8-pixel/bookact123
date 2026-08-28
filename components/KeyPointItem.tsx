@@ -37,7 +37,7 @@ export function KeyPointItem({
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 p-4">
+    <div className="rounded-xl border border-border bg-surface p-4 shadow-sm">
       {editing ? (
         <form
           action={(fd) => {
@@ -51,7 +51,7 @@ export function KeyPointItem({
             required
             defaultValue={keyPoint.content}
             rows={2}
-            className="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+            className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           {state.error && (
             <p className="text-xs text-red-600">{state.error}</p>
@@ -60,14 +60,14 @@ export function KeyPointItem({
             <button
               type="submit"
               disabled={pending}
-              className="rounded-md bg-neutral-900 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
+              className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-hover disabled:opacity-50"
             >
               {pending ? "Saving…" : "Save"}
             </button>
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="rounded-md px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
+              className="rounded-lg px-3 py-1.5 text-xs font-medium text-ink-soft hover:bg-surface-muted"
             >
               Cancel
             </button>
@@ -75,19 +75,19 @@ export function KeyPointItem({
         </form>
       ) : (
         <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-medium">
+          <p className="text-sm font-medium text-ink">
             {keyPoint.content}
             {keyPoint.source === "ai" && (
-              <span className="ml-2 rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-medium uppercase text-violet-700">
+              <span className="ml-2 rounded-full bg-gold-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold">
                 AI
               </span>
             )}
           </p>
-          <div className="flex shrink-0 gap-2">
+          <div className="flex shrink-0 gap-1">
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="text-xs text-neutral-500 hover:text-neutral-900"
+              className="rounded-md px-2 py-1.5 text-xs text-ink-soft hover:bg-surface-muted hover:text-primary"
             >
               Edit
             </button>
@@ -95,7 +95,7 @@ export function KeyPointItem({
               type="button"
               onClick={handleDelete}
               disabled={deleting}
-              className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+              className="rounded-md px-2 py-1.5 text-xs text-red-500 hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
             >
               {deleting ? "…" : "Delete"}
             </button>
@@ -103,12 +103,12 @@ export function KeyPointItem({
         </div>
       )}
 
-      <div className="mt-3 space-y-2 border-t border-neutral-100 pt-3">
-        <p className="text-xs font-semibold uppercase text-neutral-400">
+      <div className="mt-3 space-y-2 border-t border-border-soft pt-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-faint">
           Action steps
         </p>
         {keyPoint.action_steps.length === 0 ? (
-          <p className="text-xs text-neutral-400">No action steps yet.</p>
+          <p className="text-xs text-ink-faint">No action steps yet.</p>
         ) : (
           <div className="space-y-2">
             {keyPoint.action_steps.map((step) => (

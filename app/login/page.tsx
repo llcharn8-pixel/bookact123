@@ -31,65 +31,67 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center p-4">
-      <h1 className="text-2xl font-bold tracking-tight">Log in</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        Welcome back to ReadAct.
-      </p>
-      <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-        <div>
-          <label className="mb-1 block text-xs font-medium text-neutral-600">
-            Email
-          </label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-          />
-        </div>
-        <div>
-          <div className="mb-1 flex items-center justify-between">
-            <label className="block text-xs font-medium text-neutral-600">
-              Password
+    <div className="flex min-h-screen flex-col items-center justify-center bg-page p-4">
+      <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-lg sm:p-8">
+        <h1 className="font-serif text-2xl font-bold tracking-tight text-ink">
+          Log in
+        </h1>
+        <p className="mt-1 text-sm text-ink-soft">Welcome back to ReadAct.</p>
+        <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-ink-soft">
+              Email
             </label>
-            <Link
-              href="/forgot-password"
-              className="text-xs text-neutral-500 underline"
-            >
-              Forgot password?
-            </Link>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
           </div>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-          />
-        </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={pending}
-          className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
-        >
-          {pending ? "Logging in…" : "Log in"}
-        </button>
-      </form>
-      <p className="mt-4 text-sm text-neutral-500">
-        No account?{" "}
-        <Link href="/signup" className="font-medium text-neutral-900 underline">
-          Sign up
-        </Link>
-      </p>
-      <p className="mt-2 text-sm text-neutral-500">
-        <Link href="/demo" className="underline">
-          View the public demo
-        </Link>{" "}
-        without logging in.
-      </p>
+          <div>
+            <div className="mb-1 flex items-center justify-between">
+              <label className="block text-xs font-medium text-ink-soft">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-xs text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <button
+            type="submit"
+            disabled={pending}
+            className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:opacity-50"
+          >
+            {pending ? "Logging in…" : "Log in"}
+          </button>
+        </form>
+        <p className="mt-4 text-sm text-ink-soft">
+          No account?{" "}
+          <Link href="/signup" className="font-medium text-primary hover:underline">
+            Sign up
+          </Link>
+        </p>
+        <p className="mt-2 text-sm text-ink-soft">
+          <Link href="/demo" className="text-primary hover:underline">
+            View the public demo
+          </Link>{" "}
+          without logging in.
+        </p>
+      </div>
     </div>
   );
 }

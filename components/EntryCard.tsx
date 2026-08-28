@@ -15,30 +15,28 @@ export async function EntryCard({
   return (
     <Link
       href={`${basePath}/${entry.id}`}
-      className="block rounded-lg border border-neutral-200 p-4 transition-colors hover:border-neutral-400"
+      className="block rounded-xl border border-border bg-surface p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium uppercase text-neutral-500">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs font-medium uppercase tracking-wide text-ink-soft">
               {entry.type}
             </span>
             {total > 0 && (
-              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+              <span className="rounded-full bg-done-soft px-2 py-0.5 text-xs font-medium text-done">
                 {pct}% done
               </span>
             )}
           </div>
-          <h3 className="mt-1 truncate text-base font-semibold">
+          <h3 className="mt-1.5 truncate font-serif text-base font-semibold text-ink">
             {entry.title}
           </h3>
           {entry.author && (
-            <p className="truncate text-sm text-neutral-500">
-              {entry.author}
-            </p>
+            <p className="truncate text-sm text-ink-soft">{entry.author}</p>
           )}
           {entry.summary && (
-            <p className="mt-1 line-clamp-2 text-sm text-neutral-600">
+            <p className="mt-1 line-clamp-2 text-sm text-ink-soft">
               {entry.summary}
             </p>
           )}

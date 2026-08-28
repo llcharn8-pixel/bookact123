@@ -18,7 +18,7 @@ export default async function EntryDetailPage({
   } catch {
     return (
       <div className="mx-auto max-w-3xl p-4 md:p-8">
-        <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <p className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           Couldn't load this entry. Check your connection and retry.
         </p>
       </div>
@@ -33,13 +33,15 @@ export default async function EntryDetailPage({
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Key Points</h2>
+          <h2 className="font-serif text-lg font-semibold text-ink">
+            Key Points
+          </h2>
         </div>
 
         <AIKeyPointSuggester entryId={entry.id} summary={entry.summary} />
 
         {entry.key_points.length === 0 ? (
-          <p className="rounded-md border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500">
+          <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-ink-soft">
             No key points yet.
           </p>
         ) : (

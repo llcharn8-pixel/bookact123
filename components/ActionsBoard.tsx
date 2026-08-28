@@ -7,9 +7,9 @@ import { setActionStatus } from "@/lib/actions/entries";
 
 const STATUS_ORDER: ActionStatus[] = ["todo", "doing", "done"];
 const STATUS_STYLE: Record<ActionStatus, string> = {
-  todo: "bg-neutral-100 text-neutral-600",
-  doing: "bg-amber-50 text-amber-700",
-  done: "bg-emerald-50 text-emerald-700",
+  todo: "bg-todo-soft text-todo",
+  doing: "bg-doing-soft text-doing",
+  done: "bg-done-soft text-done",
 };
 const STATUS_LABEL: Record<ActionStatus, string> = {
   todo: "To do",
@@ -59,7 +59,7 @@ export function ActionsBoard({ steps }: { steps: ActionStepWithContext[] }) {
 
   if (steps.length === 0) {
     return (
-      <p className="rounded-md border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
+      <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-ink-soft">
         No action steps yet. Add one from an entry's key point.
       </p>
     );
@@ -68,16 +68,16 @@ export function ActionsBoard({ steps }: { steps: ActionStepWithContext[] }) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1 rounded-md border border-neutral-200 p-1 text-sm">
+        <div className="flex flex-wrap items-center gap-1 rounded-full border border-border bg-surface p-1 text-sm">
           {(["all", "todo", "doing", "done"] as FilterKey[]).map((key) => (
             <button
               key={key}
               type="button"
               onClick={() => setFilter(key)}
-              className={`rounded px-2.5 py-1 font-medium ${
+              className={`rounded-full px-3 py-1.5 font-medium transition-colors ${
                 filter === key
-                  ? "bg-neutral-900 text-white"
-                  : "text-neutral-600 hover:bg-neutral-100"
+                  ? "bg-primary text-white"
+                  : "text-ink-soft hover:bg-surface-muted"
               }`}
             >
               {key === "all" ? "All" : STATUS_LABEL[key]}
@@ -87,7 +87,7 @@ export function ActionsBoard({ steps }: { steps: ActionStepWithContext[] }) {
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
-          className="rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+          className="rounded-full border border-border bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
         >
           <option value="newest">Newest first</option>
           <option value="oldest">Oldest first</option>
@@ -99,28 +99,30 @@ export function ActionsBoard({ steps }: { steps: ActionStepWithContext[] }) {
         if (filter === "all" && items.length === 0) return null;
         return (
           <div key={status} className="space-y-2">
-            <h2 className="text-sm font-semibold text-neutral-500">
+            <h2 className="text-sm font-semibold text-ink-soft">
               {STATUS_LABEL[status]} ({items.length})
             </h2>
             {items.length === 0 ? (
-              <p className="text-xs text-neutral-400">Nothing here.</p>
+              <p className="text-xs text-ink-faint">Nothing here.</p>
             ) : (
               <div className="space-y-2">
                 {items.map((step) => (
                   <div
                     key={step.id}
-                    className="flex items-start justify-between gap-3 rounded-lg border border-neutral-200 p-3"
+                    className="flex flex-col gap-2 rounded-xl border border-border bg-surface p-3 shadow-sm sm:flex-row sm:items-start sm:justify-between"
                   >
                     <div className="min-w-0">
-                      <p className="text-sm font-medium">{step.action}</p>
+                      <p className="text-sm font-medium text-ink">
+                        {step.action}
+                      </p>
                       {step.achievable_result && (
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-ink-soft">
                           → {step.achievable_result}
                         </p>
                       )}
                       <Link
                         href={`/entries/${step.entry_id}`}
-                        className="mt-1 inline-block text-xs text-neutral-400 hover:text-neutral-700"
+                        className="mt-1 inline-block text-xs text-ink-faint hover:text-primary"
                       >
                         {step.entry_title} · {step.key_point_content}
                       </Link>
@@ -129,7 +131,7 @@ export function ActionsBoard({ steps }: { steps: ActionStepWithContext[] }) {
                       type="button"
                       onClick={() => cycle(step)}
                       disabled={pendingId === step.id}
-                      className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium disabled:opacity-50 ${STATUS_STYLE[step.status]}`}
+                      className={`shrink-0 self-start rounded-full px-3 py-1.5 text-xs font-medium disabled:opacity-50 ${STATUS_STYLE[step.status]}`}
                     >
                       {pendingId === step.id ? "…" : STATUS_LABEL[step.status]}
                     </button>

@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { deleteEntry, updateEntry } from "@/lib/actions/entries";
 import type { Entry } from "@/lib/types";
 
+const inputClass =
+  "w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";
+
 export function EntryHeader({ entry }: { entry: Entry }) {
   const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -37,20 +40,16 @@ export function EntryHeader({ entry }: { entry: Entry }) {
           submitted.current = true;
           formAction(fd);
         }}
-        className="space-y-3 rounded-lg border border-neutral-200 p-4"
+        className="space-y-3 rounded-xl border border-border bg-surface p-4 shadow-sm"
       >
         <div className="grid gap-3 sm:grid-cols-2">
           <input
             name="title"
             required
             defaultValue={entry.title}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm sm:col-span-2"
+            className={`${inputClass} sm:col-span-2`}
           />
-          <select
-            name="type"
-            defaultValue={entry.type}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-          >
+          <select name="type" defaultValue={entry.type} className={inputClass}>
             <option value="book">Book</option>
             <option value="article">Article</option>
           </select>
@@ -58,29 +57,29 @@ export function EntryHeader({ entry }: { entry: Entry }) {
             name="author"
             defaultValue={entry.author ?? ""}
             placeholder="Author"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className={inputClass}
           />
           <textarea
             name="summary"
             defaultValue={entry.summary ?? ""}
             rows={2}
             placeholder="Summary"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm sm:col-span-2"
+            className={`${inputClass} sm:col-span-2`}
           />
         </div>
         {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:opacity-50"
           >
             {pending ? "Saving…" : "Save"}
           </button>
           <button
             type="button"
             onClick={() => setEditing(false)}
-            className="rounded-md px-4 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+            className="rounded-lg px-4 py-2.5 text-sm font-medium text-ink-soft transition-colors hover:bg-surface-muted"
           >
             Cancel
           </button>
@@ -90,28 +89,26 @@ export function EntryHeader({ entry }: { entry: Entry }) {
   }
 
   return (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
         <button
           type="button"
           onClick={() => router.push("/")}
-          className="mb-2 text-sm text-neutral-500 hover:text-neutral-900"
+          className="mb-2 text-sm text-ink-soft hover:text-primary"
         >
           ← Entries
         </button>
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium uppercase text-neutral-500">
+          <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs font-medium uppercase tracking-wide text-ink-soft">
             {entry.type}
           </span>
         </div>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight">
+        <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
           {entry.title}
         </h1>
-        {entry.author && (
-          <p className="text-sm text-neutral-500">{entry.author}</p>
-        )}
+        {entry.author && <p className="text-sm text-ink-soft">{entry.author}</p>}
         {entry.summary && (
-          <p className="mt-2 max-w-2xl text-sm text-neutral-600">
+          <p className="mt-2 max-w-2xl text-sm text-ink-soft">
             {entry.summary}
           </p>
         )}
@@ -120,7 +117,7 @@ export function EntryHeader({ entry }: { entry: Entry }) {
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium hover:bg-neutral-100"
+          className="rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-ink hover:bg-surface-muted"
         >
           Edit
         </button>
@@ -128,7 +125,7 @@ export function EntryHeader({ entry }: { entry: Entry }) {
           type="button"
           onClick={handleDelete}
           disabled={deleting}
-          className="rounded-md border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          className="rounded-lg border border-red-200 bg-surface px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
         >
           {deleting ? "Deleting…" : "Delete"}
         </button>

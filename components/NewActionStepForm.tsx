@@ -29,7 +29,7 @@ export function NewActionStepForm({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-xs font-medium text-neutral-500 hover:text-neutral-900"
+        className="rounded-md px-2 py-1.5 text-xs font-medium text-primary hover:bg-primary-soft"
       >
         + Add action step
       </button>
@@ -43,32 +43,32 @@ export function NewActionStepForm({
         submitted.current = true;
         formAction(fd);
       }}
-      className="space-y-2 rounded-md border border-neutral-200 bg-neutral-50 p-3"
+      className="space-y-2 rounded-lg border border-border bg-surface-muted p-3"
     >
       <input
         name="action"
         required
         placeholder="Track one habit daily"
-        className="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+        className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-sm text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
       />
       <input
         name="achievable_result"
         placeholder="Achievable result (e.g. 30-day visible streak)"
-        className="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+        className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-sm text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
       />
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-neutral-900 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-hover disabled:opacity-50"
         >
           {pending ? "Saving…" : "Add"}
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-md px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-200"
+          className="rounded-lg px-3 py-1.5 text-xs font-medium text-ink-soft hover:bg-surface"
         >
           Cancel
         </button>

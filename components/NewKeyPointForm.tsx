@@ -23,7 +23,7 @@ export function NewKeyPointForm({ entryId }: { entryId: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium hover:bg-neutral-100"
+        className="w-full rounded-lg border border-dashed border-primary/40 px-3 py-2.5 text-sm font-medium text-primary hover:bg-primary-soft sm:w-auto"
       >
         + Add key point
       </button>
@@ -37,28 +37,28 @@ export function NewKeyPointForm({ entryId }: { entryId: string }) {
         submitted.current = true;
         formAction(fd);
       }}
-      className="space-y-2 rounded-lg border border-neutral-200 p-4"
+      className="space-y-2 rounded-xl border border-border bg-surface p-4 shadow-sm"
     >
       <textarea
         name="content"
         required
         rows={2}
         placeholder="Habits compound over time"
-        className="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+        className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-sm text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
       />
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:opacity-50"
         >
           {pending ? "Saving…" : "Add key point"}
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-md px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+          className="rounded-lg px-3 py-2 text-sm font-medium text-ink-soft hover:bg-surface-muted"
         >
           Cancel
         </button>

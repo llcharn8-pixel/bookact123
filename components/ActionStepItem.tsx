@@ -10,9 +10,9 @@ import type { ActionStatus, ActionStep } from "@/lib/types";
 
 const STATUS_ORDER: ActionStatus[] = ["todo", "doing", "done"];
 const STATUS_STYLE: Record<ActionStatus, string> = {
-  todo: "bg-neutral-100 text-neutral-600",
-  doing: "bg-amber-50 text-amber-700",
-  done: "bg-emerald-50 text-emerald-700",
+  todo: "bg-todo-soft text-todo",
+  doing: "bg-doing-soft text-doing",
+  done: "bg-done-soft text-done",
 };
 const STATUS_LABEL: Record<ActionStatus, string> = {
   todo: "To do",
@@ -69,33 +69,33 @@ export function ActionStepItem({
           submitted.current = true;
           formAction(fd);
         }}
-        className="space-y-2 rounded-md border border-neutral-200 bg-neutral-50 p-3"
+        className="space-y-2 rounded-lg border border-border bg-surface-muted p-3"
       >
         <input
           name="action"
           required
           defaultValue={step.action}
-          className="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
         />
         <input
           name="achievable_result"
           defaultValue={step.achievable_result ?? ""}
           placeholder="Achievable result"
-          className="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-sm text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
         />
         {state.error && <p className="text-xs text-red-600">{state.error}</p>}
         <div className="flex gap-2">
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-neutral-900 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
+            className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-hover disabled:opacity-50"
           >
             {pending ? "Saving…" : "Save"}
           </button>
           <button
             type="button"
             onClick={() => setEditing(false)}
-            className="rounded-md px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-200"
+            className="rounded-lg px-3 py-1.5 text-xs font-medium text-ink-soft hover:bg-surface"
           >
             Cancel
           </button>
@@ -105,28 +105,35 @@ export function ActionStepItem({
   }
 
   return (
-    <div className="flex items-start justify-between gap-3 rounded-md border border-neutral-200 p-3">
+    <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
-        <p className="text-sm font-medium">{step.action}</p>
+        <p className="text-sm font-medium text-ink">
+          {step.action}
+          {step.source === "ai" && (
+            <span className="ml-2 rounded-full bg-gold-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold">
+              AI
+            </span>
+          )}
+        </p>
         {step.achievable_result && (
-          <p className="mt-0.5 text-xs text-neutral-500">
+          <p className="mt-0.5 text-xs text-ink-soft">
             → {step.achievable_result}
           </p>
         )}
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-1">
         <button
           type="button"
           onClick={cycleStatus}
           disabled={toggling}
-          className={`rounded-full px-2.5 py-1 text-xs font-medium disabled:opacity-50 ${STATUS_STYLE[step.status]}`}
+          className={`rounded-full px-3 py-1.5 text-xs font-medium disabled:opacity-50 ${STATUS_STYLE[step.status]}`}
         >
           {toggling ? "…" : STATUS_LABEL[step.status]}
         </button>
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="text-xs text-neutral-500 hover:text-neutral-900"
+          className="rounded-md px-2 py-1.5 text-xs text-ink-soft hover:bg-surface-muted hover:text-primary"
         >
           Edit
         </button>
@@ -134,7 +141,7 @@ export function ActionStepItem({
           type="button"
           onClick={handleDelete}
           disabled={deleting}
-          className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+          className="rounded-md px-2 py-1.5 text-xs text-red-500 hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
         >
           {deleting ? "…" : "Delete"}
         </button>

@@ -25,10 +25,10 @@ export function Sidebar({ userEmail }: { userEmail: string | null }) {
             key={link.href}
             href={link.href}
             onClick={() => setOpen(false)}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
               active
-                ? "bg-neutral-900 text-white"
-                : "text-neutral-600 hover:bg-neutral-100"
+                ? "bg-primary text-white"
+                : "text-forest-ink/80 hover:bg-forest-soft hover:text-forest-ink"
             }`}
           >
             {link.label}
@@ -40,11 +40,11 @@ export function Sidebar({ userEmail }: { userEmail: string | null }) {
 
   const account = userEmail ? (
     <div className="space-y-2">
-      <p className="truncate text-xs text-neutral-500">{userEmail}</p>
+      <p className="truncate text-xs text-forest-ink/60">{userEmail}</p>
       <form action={signOut}>
         <button
           type="submit"
-          className="w-full rounded-md border border-neutral-300 px-3 py-1.5 text-left text-sm font-medium hover:bg-neutral-100"
+          className="w-full rounded-lg border border-forest-ink/20 px-3 py-2.5 text-left text-sm font-medium text-forest-ink hover:bg-forest-soft"
         >
           Log out
         </button>
@@ -54,7 +54,7 @@ export function Sidebar({ userEmail }: { userEmail: string | null }) {
     <Link
       href="/login"
       onClick={() => setOpen(false)}
-      className="block rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium hover:bg-neutral-100"
+      className="block rounded-lg bg-gold px-3 py-2.5 text-center text-sm font-semibold text-forest hover:brightness-95"
     >
       Log in
     </Link>
@@ -62,15 +62,18 @@ export function Sidebar({ userEmail }: { userEmail: string | null }) {
 
   return (
     <>
-      <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 md:hidden">
-        <Link href="/" className="text-lg font-bold tracking-tight">
+      <header className="flex items-center justify-between bg-forest px-4 py-3 md:hidden">
+        <Link
+          href="/"
+          className="font-serif text-lg font-bold tracking-tight text-forest-ink"
+        >
           ReadAct
         </Link>
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
-          className="rounded-md border border-neutral-200 p-2"
+          className="rounded-lg border border-forest-ink/20 p-2.5 text-forest-ink"
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path
@@ -83,14 +86,17 @@ export function Sidebar({ userEmail }: { userEmail: string | null }) {
         </button>
       </header>
       {open && (
-        <div className="space-y-3 border-b border-neutral-200 px-4 py-3 md:hidden">
+        <div className="space-y-3 bg-forest px-4 py-3 md:hidden">
           {navLinks}
           {account}
         </div>
       )}
-      <aside className="hidden w-56 shrink-0 flex-col justify-between border-r border-neutral-200 p-4 md:flex">
+      <aside className="hidden w-60 shrink-0 flex-col justify-between bg-forest p-5 md:flex">
         <div>
-          <Link href="/" className="mb-6 block text-lg font-bold tracking-tight">
+          <Link
+            href="/"
+            className="mb-8 block font-serif text-xl font-bold tracking-tight text-forest-ink"
+          >
             ReadAct
           </Link>
           {navLinks}

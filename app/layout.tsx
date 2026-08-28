@@ -20,7 +20,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className="antialiased text-neutral-900">
+      <body className="antialiased bg-page text-ink">
         <div className="flex min-h-screen flex-col md:flex-row">
           <Sidebar userEmail={user?.email ?? null} />
           <main className="flex-1 min-w-0">{children}</main>
