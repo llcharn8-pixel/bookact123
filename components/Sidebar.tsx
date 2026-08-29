@@ -10,6 +10,7 @@ const links = [
   { href: "/actions", label: "All Actions" },
   { href: "/stats", label: "Progress" },
   { href: "/discover", label: "Discover" },
+  { href: "/activity", label: "Activity" },
   { href: "/demo", label: "Public Demo" },
 ];
 

@@ -8,6 +8,7 @@ import {
   updateActionStep,
 } from "@/lib/actions/entries";
 import type { ActionStatus, ActionStep } from "@/lib/types";
+import { AiBadge } from "@/components/AiBadge";
 
 const STATUS_ORDER: ActionStatus[] = ["todo", "doing", "done"];
 const STATUS_STYLE: Record<ActionStatus, string> = {
@@ -125,9 +126,7 @@ export function ActionStepItem({
           <p className="text-sm font-medium text-ink">
             {step.action}
             {step.source === "ai" && (
-              <span className="ml-2 rounded-full bg-gold-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold">
-                AI
-              </span>
+              <AiBadge confidence={step.ai_confidence} />
             )}
           </p>
           {step.achievable_result && (

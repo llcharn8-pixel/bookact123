@@ -5,6 +5,7 @@ import { deleteKeyPoint, updateKeyPoint } from "@/lib/actions/entries";
 import type { KeyPointWithActions } from "@/lib/types";
 import { ActionStepItem } from "@/components/ActionStepItem";
 import { NewActionStepForm } from "@/components/NewActionStepForm";
+import { AiBadge } from "@/components/AiBadge";
 
 export function KeyPointItem({
   keyPoint,
@@ -78,9 +79,7 @@ export function KeyPointItem({
           <p className="text-sm font-medium text-ink">
             {keyPoint.content}
             {keyPoint.source === "ai" && (
-              <span className="ml-2 rounded-full bg-gold-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold">
-                AI
-              </span>
+              <AiBadge confidence={keyPoint.ai_confidence} />
             )}
           </p>
           <div className="flex shrink-0 gap-1">
