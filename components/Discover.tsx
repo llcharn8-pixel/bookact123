@@ -19,9 +19,26 @@ const CATEGORIES = [
   "Startups",
 ];
 
+const LANGUAGES = [
+  "English",
+  "Spanish",
+  "French",
+  "German",
+  "Portuguese",
+  "Chinese (Simplified)",
+  "Chinese (Traditional)",
+  "Japanese",
+  "Korean",
+  "Malay",
+  "Indonesian",
+  "Hindi",
+  "Arabic",
+];
+
 export function Discover() {
   const [category, setCategory] = useState("");
   const [customCategory, setCustomCategory] = useState("");
+  const [language, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recommendations, setRecommendations] = useState<Recommendation[] | null>(
@@ -41,7 +58,7 @@ export function Discover() {
     setLoading(true);
     setRecommendations(null);
     try {
-      const result = await fetchRecommendations(activeCategory);
+      const result = await fetchRecommendations(activeCategory, language);
       if (result.error || !result.recommendations) {
         setError(result.error ?? "Something went wrong.");
         return;
@@ -62,6 +79,7 @@ export function Discover() {
         mode: "title",
         title: rec.title,
         author: rec.author ?? "",
+        language,
       });
       if (result.error || !result.draft) {
         setError(result.error ?? "Something went wrong.");
@@ -111,6 +129,22 @@ export function Discover() {
           placeholder="Or type your own category…"
           className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 sm:max-w-xs"
         />
+        <div>
+          <label className="mb-1 block text-xs font-medium text-ink-soft sm:sr-only">
+            Language
+          </label>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 sm:w-auto"
+          >
+            {LANGUAGES.map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
+          </select>
+        </div>
         <button
           type="button"
           onClick={handleGetRecommendations}

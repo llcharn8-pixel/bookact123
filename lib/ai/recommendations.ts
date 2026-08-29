@@ -4,6 +4,7 @@ import { AssistantError, callOpenRouter } from "@/lib/ai/assistant";
 export async function getRecommendations(
   category: string,
   exclude: string[],
+  language: string,
 ): Promise<Recommendation[]> {
   const system = `You are a knowledgeable reading advisor. Given a topic/category, recommend well-known, highly-regarded books and articles about it. Return ONLY valid JSON matching this exact shape, nothing else — no prose, no markdown fences:
 {
@@ -14,6 +15,8 @@ export async function getRecommendations(
 
 Rules:
 - Recommend exactly 5 items.
+- Prefer well-known, widely-respected works available in ${language}. If a work is originally in another language, use its official ${language} title/translation when one exists.
+- Write "title", "author", and "reason" in ${language}.
 - Prefer well-known, widely-respected works over obscure ones.
 - Do not recommend anything in this already-read list: ${exclude.length ? exclude.join(", ") : "(none)"}.
 - reason should be specific to this book/article, not generic.`;

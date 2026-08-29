@@ -11,7 +11,9 @@ export type AssistantResult =
   | { draft?: undefined; error: string };
 
 export async function readWithAssistant(
-  input: { mode: "url"; url: string } | { mode: "title"; title: string; author: string },
+  input:
+    | { mode: "url"; url: string }
+    | { mode: "title"; title: string; author: string; language?: string },
 ): Promise<AssistantResult> {
   const supabase = await createClient();
   const {
@@ -24,7 +26,7 @@ export async function readWithAssistant(
     draft =
       input.mode === "url"
         ? await readFromUrl(input.url)
-        : await readFromTitle(input.title, input.author || null);
+        : await readFromTitle(input.title, input.author || null, input.language);
   } catch (err) {
     return {
       error:

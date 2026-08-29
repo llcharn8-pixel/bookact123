@@ -182,8 +182,9 @@ export async function readFromUrl(url: string): Promise<DraftEntry> {
 export async function readFromTitle(
   title: string,
   author: string | null,
+  language: string = "English",
 ): Promise<DraftEntry> {
-  const system = `You are a well-read assistant. The user gives you a book or article title (and maybe an author). Using your own knowledge of that work, return ONLY valid JSON matching this exact shape, nothing else — no prose, no markdown fences:\n${JSON_SHAPE}\n\nRules:\n- If you don't confidently recognize this specific work, still do your best but keep confidence scores low (below 0.4) on every key point and action step, and keep the summary honest about uncertainty.\n- Extract 2-5 key points, each with 0-2 action steps.\n- confidence is your estimate (0-1) of how accurate each point is to the real work — be honest, not optimistic.`;
+  const system = `You are a well-read assistant. The user gives you a book or article title (and maybe an author). Using your own knowledge of that work, return ONLY valid JSON matching this exact shape, nothing else — no prose, no markdown fences:\n${JSON_SHAPE}\n\nRules:\n- Write "title", "author", "summary", "content", "action", and "achievable_result" all in ${language}. If the work has an official ${language} title, use it.\n- If you don't confidently recognize this specific work, still do your best but keep confidence scores low (below 0.4) on every key point and action step, and keep the summary honest about uncertainty.\n- Extract 2-5 key points, each with 0-2 action steps.\n- confidence is your estimate (0-1) of how accurate each point is to the real work — be honest, not optimistic.`;
   const userMessage = author ? `${title} by ${author}` : title;
   const responseText = await callOpenRouter(system, userMessage);
   return parseDraftEntry(responseText, false);

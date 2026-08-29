@@ -11,6 +11,7 @@ export type RecommendationsResult =
 
 export async function fetchRecommendations(
   category: string,
+  language: string,
 ): Promise<RecommendationsResult> {
   const supabase = await createClient();
   const {
@@ -28,7 +29,11 @@ export async function fetchRecommendations(
 
   let recommendations: Recommendation[];
   try {
-    recommendations = await getRecommendations(category.trim(), alreadyRead);
+    recommendations = await getRecommendations(
+      category.trim(),
+      alreadyRead,
+      language,
+    );
   } catch (err) {
     return {
       error:
@@ -44,7 +49,7 @@ export async function fetchRecommendations(
     target_table: "entries",
     target_id: null,
     risk_level: "low",
-    payload: { category: category.trim(), count: recommendations.length },
+    payload: { category: category.trim(), language, count: recommendations.length },
   });
 
   return { recommendations };
