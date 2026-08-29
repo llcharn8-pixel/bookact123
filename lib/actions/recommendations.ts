@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { AssistantError } from "@/lib/ai/assistant";
-import { getRecommendations } from "@/lib/ai/recommendations";
+import { getRecommendations, type RecommendationQuery } from "@/lib/ai/recommendations";
 import type { Recommendation } from "@/lib/types";
 
 export type RecommendationsResult =
@@ -10,7 +10,7 @@ export type RecommendationsResult =
   | { recommendations?: undefined; error: string };
 
 export async function fetchRecommendations(
-  category: string,
+  query: RecommendationQuery,
   language: string,
 ): Promise<RecommendationsResult> {
   const supabase = await createClient();
@@ -19,7 +19,15 @@ export async function fetchRecommendations(
   } = await supabase.auth.getUser();
   if (!user) return { error: "You must be logged in." };
 
-  if (!category.trim()) return { error: "Pick or type a category first." };
+  const value = query.mode === "category" ? query.category : query.author;
+  if (!value.trim()) {
+    return {
+      error:
+        query.mode === "category"
+          ? "Pick or type a category first."
+          : "Type an author name first.",
+    };
+  }
 
   const { data: existing } = await supabase
     .from("entries")
@@ -29,11 +37,7 @@ export async function fetchRecommendations(
 
   let recommendations: Recommendation[];
   try {
-    recommendations = await getRecommendations(
-      category.trim(),
-      alreadyRead,
-      language,
-    );
+    recommendations = await getRecommendations(query, alreadyRead, language);
   } catch (err) {
     return {
       error:
@@ -49,7 +53,7 @@ export async function fetchRecommendations(
     target_table: "entries",
     target_id: null,
     risk_level: "low",
-    payload: { category: category.trim(), language, count: recommendations.length },
+    payload: { query, language, count: recommendations.length },
   });
 
   return { recommendations };

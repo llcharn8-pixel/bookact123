@@ -1,15 +1,24 @@
 import type { Recommendation } from "@/lib/types";
 import { AssistantError, callOpenRouter } from "@/lib/ai/assistant";
 
+export type RecommendationQuery =
+  | { mode: "category"; category: string }
+  | { mode: "author"; author: string };
+
 export async function getRecommendations(
-  category: string,
+  query: RecommendationQuery,
   exclude: string[],
   language: string,
 ): Promise<Recommendation[]> {
-  const system = `You are a knowledgeable reading advisor. Given a topic/category, recommend well-known, highly-regarded books and articles about it. Return ONLY valid JSON matching this exact shape, nothing else — no prose, no markdown fences:
+  const task =
+    query.mode === "category"
+      ? `Given a topic/category, recommend well-known, highly-regarded books and articles about it.`
+      : `Given an author's name, recommend their most well-known and highly-regarded books and articles. If the author has written fewer than 5 notable works, include their other genuinely notable writing instead of padding with unrelated works.`;
+
+  const system = `You are a knowledgeable reading advisor. ${task} Return ONLY valid JSON matching this exact shape, nothing else — no prose, no markdown fences:
 {
   "recommendations": [
-    { "title": "...", "author": "author name or null", "type": "book" or "article", "reason": "one concise sentence on why this fits the category" }
+    { "title": "...", "author": "author name or null", "type": "book" or "article", "reason": "one concise sentence on why this fits" }
   ]
 }
 
@@ -19,9 +28,14 @@ Rules:
 - Write "title", "author", and "reason" in ${language}.
 - Prefer well-known, widely-respected works over obscure ones.
 - Do not recommend anything in this already-read list: ${exclude.length ? exclude.join(", ") : "(none)"}.
-- reason should be specific to this book/article, not generic.`;
+- reason should be specific to this book/article, not generic.${query.mode === "author" ? "\n- Every recommendation's author field must be this exact author (or a very close match, e.g. co-authored works)." : ""}`;
 
-  const responseText = await callOpenRouter(system, `Category: ${category}`);
+  const userMessage =
+    query.mode === "category"
+      ? `Category: ${query.category}`
+      : `Author: ${query.author}`;
+
+  const responseText = await callOpenRouter(system, userMessage);
 
   let parsed: unknown;
   try {

@@ -35,9 +35,13 @@ const LANGUAGES = [
   "Arabic",
 ];
 
+type SearchMode = "category" | "author";
+
 export function Discover() {
+  const [searchMode, setSearchMode] = useState<SearchMode>("category");
   const [category, setCategory] = useState("");
   const [customCategory, setCustomCategory] = useState("");
+  const [author, setAuthor] = useState("");
   const [language, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,17 +52,27 @@ export function Discover() {
   const [draft, setDraft] = useState<DraftEntry | null>(null);
 
   const activeCategory = category || customCategory.trim();
+  const canSearch = searchMode === "category" ? !!activeCategory : !!author.trim();
 
   async function handleGetRecommendations() {
-    if (!activeCategory) {
-      setError("Pick or type a category first.");
+    if (!canSearch) {
+      setError(
+        searchMode === "category"
+          ? "Pick or type a category first."
+          : "Type an author name first.",
+      );
       return;
     }
     setError(null);
     setLoading(true);
     setRecommendations(null);
     try {
-      const result = await fetchRecommendations(activeCategory, language);
+      const result = await fetchRecommendations(
+        searchMode === "category"
+          ? { mode: "category", category: activeCategory }
+          : { mode: "author", author: author.trim() },
+        language,
+      );
       if (result.error || !result.recommendations) {
         setError(result.error ?? "Something went wrong.");
         return;
@@ -99,36 +113,72 @@ export function Discover() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {CATEGORIES.map((c) => (
-          <button
-            key={c}
-            type="button"
-            onClick={() => {
-              setCategory(c);
-              setCustomCategory("");
-            }}
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-              category === c
-                ? "bg-primary text-white"
-                : "border border-border bg-surface text-ink-soft hover:bg-surface-muted"
-            }`}
-          >
-            {c}
-          </button>
-        ))}
+      <div className="flex gap-1 rounded-full border border-border bg-surface p-1 text-sm w-fit">
+        <button
+          type="button"
+          onClick={() => setSearchMode("category")}
+          className={`rounded-full px-3 py-1.5 font-medium transition-colors ${
+            searchMode === "category"
+              ? "bg-primary text-white"
+              : "text-ink-soft hover:bg-surface-muted"
+          }`}
+        >
+          By category
+        </button>
+        <button
+          type="button"
+          onClick={() => setSearchMode("author")}
+          className={`rounded-full px-3 py-1.5 font-medium transition-colors ${
+            searchMode === "author"
+              ? "bg-primary text-white"
+              : "text-ink-soft hover:bg-surface-muted"
+          }`}
+        >
+          By author
+        </button>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      {searchMode === "category" ? (
+        <>
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => {
+                  setCategory(c);
+                  setCustomCategory("");
+                }}
+                className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                  category === c
+                    ? "bg-primary text-white"
+                    : "border border-border bg-surface text-ink-soft hover:bg-surface-muted"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          <input
+            value={customCategory}
+            onChange={(e) => {
+              setCustomCategory(e.target.value);
+              setCategory("");
+            }}
+            placeholder="Or type your own category…"
+            className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 sm:max-w-xs"
+          />
+        </>
+      ) : (
         <input
-          value={customCategory}
-          onChange={(e) => {
-            setCustomCategory(e.target.value);
-            setCategory("");
-          }}
-          placeholder="Or type your own category…"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+          placeholder="e.g. James Clear"
           className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 sm:max-w-xs"
         />
+      )}
+
+      <div className="flex flex-col gap-2 sm:flex-row">
         <div>
           <label className="mb-1 block text-xs font-medium text-ink-soft sm:sr-only">
             Language
@@ -148,7 +198,7 @@ export function Discover() {
         <button
           type="button"
           onClick={handleGetRecommendations}
-          disabled={loading || !activeCategory}
+          disabled={loading || !canSearch}
           className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover disabled:opacity-50"
         >
           {loading ? "Finding books…" : "Get recommendations"}
