@@ -47,6 +47,13 @@ export type DraftKeyPoint = {
   action_steps: DraftActionStep[];
 };
 
+export type Recommendation = {
+  title: string;
+  author: string | null;
+  type: EntryType;
+  reason: string;
+};
+
 export type DraftEntry = {
   title: string;
   author: string | null;

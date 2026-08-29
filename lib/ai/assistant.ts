@@ -20,7 +20,7 @@ const JSON_SHAPE = `{
   ]
 }`;
 
-async function callOpenRouter(system: string, user: string): Promise<string> {
+export async function callOpenRouter(system: string, user: string): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     throw new AssistantError("Smart Assistant is not configured.");
