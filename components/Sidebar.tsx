@@ -8,6 +8,7 @@ import { signOut } from "@/lib/actions/auth";
 const links = [
   { href: "/", label: "Entries" },
   { href: "/actions", label: "All Actions" },
+  { href: "/stats", label: "Progress" },
   { href: "/discover", label: "Discover" },
   { href: "/demo", label: "Public Demo" },
 ];

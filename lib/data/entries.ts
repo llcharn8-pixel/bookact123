@@ -167,10 +167,10 @@ export async function getAllActionSteps(): Promise<ActionStepWithContext[]> {
   }));
 }
 
-export async function getUserStreak(): Promise<number> {
+export async function getCompletedDays(): Promise<Set<string>> {
   const supabase = await createClient();
   const userId = await getCurrentUserId();
-  if (!userId) return 0;
+  if (!userId) return new Set();
 
   const { data, error } = await supabase
     .from("action_steps")
@@ -178,14 +178,17 @@ export async function getUserStreak(): Promise<number> {
     .eq("user_id", userId)
     .not("completed_at", "is", null);
 
-  if (error || !data) return 0;
+  if (error || !data) return new Set();
 
-  const days = new Set(
+  return new Set(
     data
       .map((row) => row.completed_at as string | null)
       .filter((v): v is string => Boolean(v))
       .map((v) => v.slice(0, 10)),
   );
+}
+
+export function computeCurrentStreak(days: Set<string>): number {
   if (days.size === 0) return 0;
 
   const cursor = new Date();
@@ -200,4 +203,29 @@ export async function getUserStreak(): Promise<number> {
     cursor.setUTCDate(cursor.getUTCDate() - 1);
   }
   return streak;
+}
+
+export function computeLongestStreak(days: Set<string>): number {
+  if (days.size === 0) return 0;
+
+  const sorted = [...days].sort();
+  let longest = 1;
+  let current = 1;
+
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = new Date(sorted[i - 1] + "T00:00:00Z");
+    const curr = new Date(sorted[i] + "T00:00:00Z");
+    const diffDays = Math.round(
+      (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    current = diffDays === 1 ? current + 1 : 1;
+    longest = Math.max(longest, current);
+  }
+
+  return longest;
+}
+
+export async function getUserStreak(): Promise<number> {
+  const days = await getCompletedDays();
+  return computeCurrentStreak(days);
 }
