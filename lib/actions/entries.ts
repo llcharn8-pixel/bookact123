@@ -214,8 +214,31 @@ export async function setActionStatus(
   const supabase = await createClient();
   await supabase
     .from("action_steps")
-    .update({ status })
+    .update({
+      status,
+      completed_at: status === "done" ? new Date().toISOString() : null,
+    })
     .eq("id", actionStepId);
   revalidatePath(`/entries/${entryId}`);
   revalidatePath("/actions");
+  revalidatePath("/", "layout");
+}
+
+export async function setActionReflection(
+  actionStepId: string,
+  entryId: string,
+  reflection: string,
+): Promise<ActionResult> {
+  const trimmed = reflection.trim();
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("action_steps")
+    .update({ reflection: trimmed || null })
+    .eq("id", actionStepId);
+
+  if (error) return fail("Couldn't save. Check your connection and retry.");
+
+  revalidatePath(`/entries/${entryId}`);
+  revalidatePath("/actions");
+  return {};
 }

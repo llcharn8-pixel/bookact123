@@ -32,6 +32,8 @@ export type ActionStep = {
   status: ActionStatus;
   source: Source;
   ai_confidence: number | null;
+  completed_at: string | null;
+  reflection: string | null;
   created_at: string;
 };
 

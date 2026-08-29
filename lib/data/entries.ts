@@ -139,6 +139,8 @@ export async function getAllActionSteps(): Promise<ActionStepWithContext[]> {
     status: "todo" | "doing" | "done";
     source: "human" | "ai";
     ai_confidence: number | null;
+    completed_at: string | null;
+    reflection: string | null;
     created_at: string;
     key_points: {
       content: string;
@@ -156,9 +158,46 @@ export async function getAllActionSteps(): Promise<ActionStepWithContext[]> {
     status: row.status,
     source: row.source,
     ai_confidence: row.ai_confidence,
+    completed_at: row.completed_at,
+    reflection: row.reflection,
     created_at: row.created_at,
     key_point_content: row.key_points.content,
     entry_id: row.key_points.entry_id,
     entry_title: row.key_points.entries.title,
   }));
+}
+
+export async function getUserStreak(): Promise<number> {
+  const supabase = await createClient();
+  const userId = await getCurrentUserId();
+  if (!userId) return 0;
+
+  const { data, error } = await supabase
+    .from("action_steps")
+    .select("completed_at")
+    .eq("user_id", userId)
+    .not("completed_at", "is", null);
+
+  if (error || !data) return 0;
+
+  const days = new Set(
+    data
+      .map((row) => row.completed_at as string | null)
+      .filter((v): v is string => Boolean(v))
+      .map((v) => v.slice(0, 10)),
+  );
+  if (days.size === 0) return 0;
+
+  const cursor = new Date();
+  const todayStr = cursor.toISOString().slice(0, 10);
+  if (!days.has(todayStr)) {
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+
+  let streak = 0;
+  while (days.has(cursor.toISOString().slice(0, 10))) {
+    streak++;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+  return streak;
 }

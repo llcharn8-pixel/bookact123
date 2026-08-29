@@ -12,9 +12,25 @@ const links = [
   { href: "/demo", label: "Public Demo" },
 ];
 
-export function Sidebar({ userEmail }: { userEmail: string | null }) {
+export function Sidebar({
+  userEmail,
+  streak,
+}: {
+  userEmail: string | null;
+  streak: number;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  const streakBadge =
+    userEmail && streak > 0 ? (
+      <div className="mb-4 flex items-center gap-1.5 rounded-lg bg-gold-soft px-3 py-2 text-sm font-semibold text-gold">
+        <span>🔥</span>
+        <span>
+          {streak}-day streak
+        </span>
+      </div>
+    ) : null;
 
   const navLinks = (
     <nav className="flex flex-col gap-1">
@@ -70,21 +86,28 @@ export function Sidebar({ userEmail }: { userEmail: string | null }) {
         >
           ReadAct
         </Link>
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
-          className="rounded-lg border border-forest-ink/20 p-2.5 text-forest-ink"
-        >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path
-              d="M2 4.5h14M2 9h14M2 13.5h14"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
+        <div className="flex items-center gap-2">
+          {userEmail && streak > 0 && (
+            <span className="flex items-center gap-1 rounded-full bg-gold-soft px-2.5 py-1 text-xs font-semibold text-gold">
+              🔥 {streak}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Toggle menu"
+            className="rounded-lg border border-forest-ink/20 p-2.5 text-forest-ink"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M2 4.5h14M2 9h14M2 13.5h14"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
       </header>
       {open && (
         <div className="space-y-3 bg-forest px-4 py-3 md:hidden">
@@ -96,10 +119,11 @@ export function Sidebar({ userEmail }: { userEmail: string | null }) {
         <div>
           <Link
             href="/"
-            className="mb-8 block font-serif text-xl font-bold tracking-tight text-forest-ink"
+            className="mb-6 block font-serif text-xl font-bold tracking-tight text-forest-ink"
           >
             ReadAct
           </Link>
+          {streakBadge}
           {navLinks}
         </div>
         {account}
