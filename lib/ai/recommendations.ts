@@ -9,11 +9,12 @@ export async function getRecommendations(
   query: RecommendationQuery,
   exclude: string[],
   language: string,
+  count: number,
 ): Promise<Recommendation[]> {
   const task =
     query.mode === "category"
       ? `Given a topic/category, recommend well-known, highly-regarded books and articles about it.`
-      : `Given an author's name, recommend their most well-known and highly-regarded books and articles. If the author has written fewer than 5 notable works, include their other genuinely notable writing instead of padding with unrelated works.`;
+      : `Given an author's name, recommend their most well-known and highly-regarded books and articles. If the author has written fewer than ${count} notable works, include their other genuinely notable writing instead of padding with unrelated works.`;
 
   const system = `You are a knowledgeable reading advisor. ${task} Return ONLY valid JSON matching this exact shape, nothing else — no prose, no markdown fences:
 {
@@ -23,7 +24,7 @@ export async function getRecommendations(
 }
 
 Rules:
-- Recommend exactly 5 items.
+- Recommend exactly ${count} items.
 - Prefer well-known, widely-respected works available in ${language}. If a work is originally in another language, use its official ${language} title/translation when one exists.
 - Write "title", "author", and "reason" in ${language}.
 - Prefer well-known, widely-respected works over obscure ones.
@@ -35,7 +36,8 @@ Rules:
       ? `Category: ${query.category}`
       : `Author: ${query.author}`;
 
-  const responseText = await callOpenRouter(system, userMessage);
+  const maxTokens = Math.min(4000, count * 100 + 300);
+  const responseText = await callOpenRouter(system, userMessage, maxTokens);
 
   let parsed: unknown;
   try {

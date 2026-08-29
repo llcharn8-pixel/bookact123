@@ -9,9 +9,12 @@ export type RecommendationsResult =
   | { recommendations: Recommendation[]; error?: undefined }
   | { recommendations?: undefined; error: string };
 
+const ALLOWED_COUNTS = [5, 10, 20];
+
 export async function fetchRecommendations(
   query: RecommendationQuery,
   language: string,
+  count: number,
 ): Promise<RecommendationsResult> {
   const supabase = await createClient();
   const {
@@ -29,6 +32,8 @@ export async function fetchRecommendations(
     };
   }
 
+  const safeCount = ALLOWED_COUNTS.includes(count) ? count : 5;
+
   const { data: existing } = await supabase
     .from("entries")
     .select("title")
@@ -37,7 +42,7 @@ export async function fetchRecommendations(
 
   let recommendations: Recommendation[];
   try {
-    recommendations = await getRecommendations(query, alreadyRead, language);
+    recommendations = await getRecommendations(query, alreadyRead, language, safeCount);
   } catch (err) {
     return {
       error:

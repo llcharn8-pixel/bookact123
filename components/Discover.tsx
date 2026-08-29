@@ -36,6 +36,7 @@ const LANGUAGES = [
 ];
 
 type SearchMode = "category" | "author";
+const COUNTS = [5, 10, 20];
 
 export function Discover() {
   const [searchMode, setSearchMode] = useState<SearchMode>("category");
@@ -43,6 +44,7 @@ export function Discover() {
   const [customCategory, setCustomCategory] = useState("");
   const [author, setAuthor] = useState("");
   const [language, setLanguage] = useState("English");
+  const [count, setCount] = useState(5);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recommendations, setRecommendations] = useState<Recommendation[] | null>(
@@ -72,6 +74,7 @@ export function Discover() {
           ? { mode: "category", category: activeCategory }
           : { mode: "author", author: author.trim() },
         language,
+        count,
       );
       if (result.error || !result.recommendations) {
         setError(result.error ?? "Something went wrong.");
@@ -191,6 +194,22 @@ export function Discover() {
             {LANGUAGES.map((l) => (
               <option key={l} value={l}>
                 {l}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-ink-soft sm:sr-only">
+            How many
+          </label>
+          <select
+            value={count}
+            onChange={(e) => setCount(Number(e.target.value))}
+            className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 sm:w-auto"
+          >
+            {COUNTS.map((c) => (
+              <option key={c} value={c}>
+                Top {c}
               </option>
             ))}
           </select>
