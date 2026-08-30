@@ -3,6 +3,7 @@ import { getEntries } from "@/lib/data/entries";
 import { EntryCard } from "@/components/EntryCard";
 import { NewEntryForm } from "@/components/NewEntryForm";
 import { SmartAssistant } from "@/components/SmartAssistant";
+import { FileUpload } from "@/components/FileUpload";
 
 export const maxDuration = 60;
 
@@ -63,6 +64,7 @@ export default function EntriesPage() {
       </div>
       <div className="flex flex-col gap-3 sm:flex-row">
         <NewEntryForm />
+        <FileUpload />
         <SmartAssistant />
       </div>
       <Suspense fallback={<EntrySkeleton />}>
