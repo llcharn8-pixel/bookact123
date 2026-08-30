@@ -9,8 +9,10 @@ const inputClass =
 const labelClass = "mb-1 block text-xs font-medium text-ink-soft";
 
 const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2MB
+const MAX_PDF_BYTES = 15 * 1024 * 1024; // 15MB
 const MAX_TEXT_CHARS = 20000;
-const ACCEPTED_EXTENSIONS = [".txt", ".md", ".markdown"];
+const TEXT_EXTENSIONS = [".txt", ".md", ".markdown"];
+const ACCEPTED_EXTENSIONS = [...TEXT_EXTENSIONS, ".pdf"];
 
 function stripExtension(filename: string): string {
   return filename.replace(/\.[^./\\]+$/, "");
@@ -24,6 +26,7 @@ export function FileUpload() {
   const [summary, setSummary] = useState("");
   const [fileError, setFileError] = useState<string | null>(null);
   const [truncated, setTruncated] = useState(false);
+  const [extracting, setExtracting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [state, formAction, pending] = useActionState(createEntry, {});
@@ -44,6 +47,7 @@ export function FileUpload() {
     setType("article");
     setFileError(null);
     setTruncated(false);
+    setExtracting(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
@@ -51,16 +55,44 @@ export function FileUpload() {
     fileInputRef.current?.click();
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setFileError(null);
     const lowerName = file.name.toLowerCase();
     if (!ACCEPTED_EXTENSIONS.some((ext) => lowerName.endsWith(ext))) {
-      setFileError("Only .txt and .md files are supported right now.");
+      setFileError("Only .txt, .md, and .pdf files are supported right now.");
       return;
     }
+
+    if (lowerName.endsWith(".pdf")) {
+      if (file.size > MAX_PDF_BYTES) {
+        setFileError("That PDF is too large (max 15MB).");
+        return;
+      }
+      setExtracting(true);
+      try {
+        const body = new FormData();
+        body.append("file", file);
+        const res = await fetch("/api/extract-pdf", { method: "POST", body });
+        const data = await res.json();
+        if (!res.ok) {
+          setFileError(data.error ?? "Couldn't read that PDF.");
+          return;
+        }
+        setTitle(stripExtension(file.name));
+        setSummary(data.text);
+        setTruncated(Boolean(data.truncated));
+        setOpen(true);
+      } catch {
+        setFileError("Couldn't read that PDF. Try again.");
+      } finally {
+        setExtracting(false);
+      }
+      return;
+    }
+
     if (file.size > MAX_FILE_BYTES) {
       setFileError("That file is too large (max 2MB).");
       return;
@@ -86,7 +118,7 @@ export function FileUpload() {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".txt,.md,.markdown"
+        accept=".txt,.md,.markdown,.pdf"
         onChange={handleFileChange}
         className="hidden"
       />
@@ -96,9 +128,10 @@ export function FileUpload() {
           <button
             type="button"
             onClick={handleFileButtonClick}
-            className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-ink shadow-sm transition-colors hover:bg-surface-muted sm:w-auto"
+            disabled={extracting}
+            className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-ink shadow-sm transition-colors hover:bg-surface-muted disabled:opacity-50 sm:w-auto"
           >
-            📄 Upload a file (.txt, .md)
+            {extracting ? "Extracting text from PDF…" : "📄 Upload a file (.txt, .md, .pdf)"}
           </button>
           {fileError && <p className="mt-2 text-xs text-red-600">{fileError}</p>}
         </div>
