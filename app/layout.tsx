@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Sidebar } from "@/components/Sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { getUserStreak } from "@/lib/data/entries";
+import { getAiUsageToday } from "@/lib/ai/usageGuard";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,12 +20,18 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
   const streak = user ? await getUserStreak() : 0;
+  const aiUsage = user ? await getAiUsageToday() : null;
 
   return (
     <html lang="en">
       <body className="antialiased bg-page text-ink">
         <div className="flex min-h-screen flex-col md:flex-row">
-          <Sidebar userEmail={user?.email ?? null} streak={streak} />
+          <Sidebar
+            userEmail={user?.email ?? null}
+            streak={streak}
+            aiRemaining={aiUsage?.remaining ?? null}
+            aiLimit={aiUsage?.limit ?? null}
+          />
           <main className="flex-1 min-w-0">{children}</main>
         </div>
       </body>

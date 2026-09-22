@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { AssistantError } from "@/lib/ai/assistant";
 import { getRecommendations, type RecommendationQuery } from "@/lib/ai/recommendations";
+import { AI_LIMIT_MESSAGE, checkAiQuota } from "@/lib/ai/usageGuard";
 import type { Recommendation } from "@/lib/types";
 
 export type RecommendationsResult =
@@ -21,6 +22,9 @@ export async function fetchRecommendations(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "You must be logged in." };
+
+  const quota = await checkAiQuota(supabase, user.id);
+  if (!quota.allowed) return { error: AI_LIMIT_MESSAGE };
 
   const value = query.mode === "category" ? query.category : query.author;
   if (!value.trim()) {

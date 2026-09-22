@@ -17,9 +17,13 @@ const links = [
 export function Sidebar({
   userEmail,
   streak,
+  aiRemaining,
+  aiLimit,
 }: {
   userEmail: string | null;
   streak: number;
+  aiRemaining: number | null;
+  aiLimit: number | null;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -30,6 +34,22 @@ export function Sidebar({
         <span>🔥</span>
         <span>
           {streak}-day streak
+        </span>
+      </div>
+    ) : null;
+
+  const aiUsageBadge =
+    userEmail && aiRemaining !== null && aiLimit !== null ? (
+      <div
+        className={`mb-4 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold ${
+          aiRemaining === 0
+            ? "bg-red-50 text-red-600"
+            : "bg-surface-muted text-ink-soft"
+        }`}
+      >
+        <span>✨</span>
+        <span>
+          {aiRemaining}/{aiLimit} AI actions left today
         </span>
       </div>
     ) : null;
@@ -126,6 +146,7 @@ export function Sidebar({
             ReadAct
           </Link>
           {streakBadge}
+          {aiUsageBadge}
           {navLinks}
         </div>
         {account}
