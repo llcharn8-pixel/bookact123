@@ -133,6 +133,13 @@ export function FileUpload() {
           >
             {extracting ? "Extracting text from PDF…" : "📄 Upload a file (.txt, .md, .pdf)"}
           </button>
+          <p className="mt-1.5 text-[11px] text-ink-faint">
+            Only upload content you have the right to use. See{" "}
+            <a href="/legal" className="underline hover:text-ink-soft">
+              Disclaimer &amp; Terms
+            </a>
+            .
+          </p>
           {fileError && <p className="mt-2 text-xs text-red-600">{fileError}</p>}
         </div>
       ) : (

@@ -88,15 +88,31 @@ export function Sidebar({
           Log out
         </button>
       </form>
+      <Link
+        href="/legal"
+        onClick={() => setOpen(false)}
+        className="block text-center text-xs text-forest-ink/50 hover:text-forest-ink/80 hover:underline"
+      >
+        Disclaimer &amp; Terms
+      </Link>
     </div>
   ) : (
-    <Link
-      href="/login"
-      onClick={() => setOpen(false)}
-      className="block rounded-lg bg-gold px-3 py-2.5 text-center text-sm font-semibold text-forest hover:brightness-95"
-    >
-      Log in
-    </Link>
+    <div className="space-y-2">
+      <Link
+        href="/login"
+        onClick={() => setOpen(false)}
+        className="block rounded-lg bg-gold px-3 py-2.5 text-center text-sm font-semibold text-forest hover:brightness-95"
+      >
+        Log in
+      </Link>
+      <Link
+        href="/legal"
+        onClick={() => setOpen(false)}
+        className="block text-center text-xs text-forest-ink/50 hover:text-forest-ink/80 hover:underline"
+      >
+        Disclaimer &amp; Terms
+      </Link>
+    </div>
   );
 
   return (

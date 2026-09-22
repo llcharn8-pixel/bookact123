@@ -103,6 +103,13 @@ export default function SignupPage() {
             Log in
           </Link>
         </p>
+        <p className="mt-3 text-xs text-ink-faint">
+          By signing up, you agree to the{" "}
+          <Link href="/legal" className="underline hover:text-ink-soft">
+            Disclaimer &amp; Terms
+          </Link>
+          .
+        </p>
       </div>
     </div>
   );

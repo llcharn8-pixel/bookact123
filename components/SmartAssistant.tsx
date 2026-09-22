@@ -187,6 +187,11 @@ export function SmartAssistant() {
           </button>
           <p className="mt-1.5 text-[11px] text-ink-faint">
             Short clips only — roughly a couple minutes of audio, or a very short video.
+            Only upload content you have the right to use. See{" "}
+            <a href="/legal" className="underline hover:text-ink-soft">
+              Disclaimer &amp; Terms
+            </a>
+            .
           </p>
         </div>
       )}
