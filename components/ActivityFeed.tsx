@@ -22,6 +22,8 @@ function describe(log: ActivityLog): string {
     }
     case "assistant_apply_drafts":
       return `Created "${log.entry_title ?? "an entry"}" via Smart Assistant — ${Number(p.accepted_count ?? 0)} key points`;
+    case "transcribe_media":
+      return `Transcribed an audio/video file — ${Number(p.key_point_count ?? 0)} key points found`;
     case "get_recommendations": {
       const query = p.query as { mode?: string; category?: string; author?: string } | undefined;
       const subject =

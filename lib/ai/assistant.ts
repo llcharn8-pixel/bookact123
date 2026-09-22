@@ -4,7 +4,7 @@ export class AssistantError extends Error {}
 
 const OPENROUTER_MODEL = "deepseek/deepseek-v4-flash-0731";
 
-const JSON_SHAPE = `{
+export const JSON_SHAPE = `{
   "title": "the book or article title",
   "author": "author name, or null if unknown",
   "type": "book" or "article",
@@ -74,7 +74,7 @@ export async function callOpenRouter(
   return text;
 }
 
-function parseDraftEntry(text: string, grounded: boolean): DraftEntry {
+export function parseDraftEntry(text: string, grounded: boolean): DraftEntry {
   let parsed: unknown;
   try {
     const jsonMatch = text.match(/\{[\s\S]*\}/);

@@ -7,7 +7,12 @@ import { getCurrentUserId } from "@/lib/data/entries";
 // nothing at this usage level.
 export const DAILY_AI_LIMIT = 10;
 
-const LIMITED_ACTIONS = ["extract_key_points", "assistant_read", "get_recommendations"];
+const LIMITED_ACTIONS = [
+  "extract_key_points",
+  "assistant_read",
+  "get_recommendations",
+  "transcribe_media",
+];
 
 function todayStartUtc(): string {
   const now = new Date();
