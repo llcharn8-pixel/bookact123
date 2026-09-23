@@ -21,8 +21,14 @@ const nextConfig: NextConfig = {
   // platform-specific native binary Vercel's own npm install resolved
   // (e.g. @napi-rs/canvas-linux-x64-gnu) actually ships with the function.
   outputFileTracingIncludes: {
-    "/api/extract-pdf": ["./node_modules/@napi-rs/**/*"],
-    "/api/debug-pdf": ["./node_modules/@napi-rs/**/*"],
+    "/api/extract-pdf": [
+      "./node_modules/@napi-rs/**/*",
+      "./node_modules/pdfjs-dist/**/*",
+    ],
+    "/api/debug-pdf": [
+      "./node_modules/@napi-rs/**/*",
+      "./node_modules/pdfjs-dist/**/*",
+    ],
   },
 };
 
