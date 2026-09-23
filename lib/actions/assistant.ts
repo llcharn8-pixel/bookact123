@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { AssistantError, readFromTitle, readFromUrl } from "@/lib/ai/assistant";
+import { readFromYoutube } from "@/lib/ai/youtube";
 import { AI_LIMIT_MESSAGE, checkAiQuota } from "@/lib/ai/usageGuard";
 import type { DraftEntry } from "@/lib/types";
 
@@ -14,7 +15,8 @@ export type AssistantResult =
 export async function readWithAssistant(
   input:
     | { mode: "url"; url: string }
-    | { mode: "title"; title: string; author: string; language?: string },
+    | { mode: "title"; title: string; author: string; language?: string }
+    | { mode: "youtube"; url: string },
 ): Promise<AssistantResult> {
   const supabase = await createClient();
   const {
@@ -30,7 +32,9 @@ export async function readWithAssistant(
     draft =
       input.mode === "url"
         ? await readFromUrl(input.url)
-        : await readFromTitle(input.title, input.author || null, input.language);
+        : input.mode === "youtube"
+          ? await readFromYoutube(input.url)
+          : await readFromTitle(input.title, input.author || null, input.language);
   } catch (err) {
     return {
       error:

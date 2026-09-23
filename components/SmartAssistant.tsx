@@ -10,12 +10,13 @@ const inputClass =
 
 const MAX_MEDIA_BYTES = 4 * 1024 * 1024; // 4MB — matches the server's hard cap
 
-type Mode = "url" | "title" | "media";
+type Mode = "url" | "title" | "media" | "youtube";
 
 export function SmartAssistant() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("url");
   const [url, setUrl] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -27,6 +28,7 @@ export function SmartAssistant() {
   function reset() {
     setOpen(false);
     setUrl("");
+    setYoutubeUrl("");
     setTitle("");
     setAuthor("");
     setMediaFile(null);
@@ -64,6 +66,10 @@ export function SmartAssistant() {
       setError("Choose an audio or video file first.");
       return;
     }
+    if (mode === "youtube" && !youtubeUrl.trim()) {
+      setError("Paste a YouTube link first.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -83,7 +89,9 @@ export function SmartAssistant() {
       const result = await readWithAssistant(
         mode === "url"
           ? { mode: "url", url: url.trim() }
-          : { mode: "title", title: title.trim(), author: author.trim() },
+          : mode === "youtube"
+            ? { mode: "youtube", url: youtubeUrl.trim() }
+            : { mode: "title", title: title.trim(), author: author.trim() },
       );
       if (result.error || !result.draft) {
         setError(result.error ?? "Something went wrong.");
@@ -143,6 +151,15 @@ export function SmartAssistant() {
         >
           Audio/video
         </button>
+        <button
+          type="button"
+          onClick={() => setMode("youtube")}
+          className={`rounded-full px-3 py-1.5 font-medium transition-colors ${
+            mode === "youtube" ? "bg-gold text-white" : "text-ink-soft hover:bg-gold-soft"
+          }`}
+        >
+          YouTube
+        </button>
       </div>
 
       {mode === "url" && (
@@ -167,6 +184,21 @@ export function SmartAssistant() {
             placeholder="Author (optional)"
             className={inputClass}
           />
+        </div>
+      )}
+      {mode === "youtube" && (
+        <div>
+          <input
+            value={youtubeUrl}
+            onChange={(e) => setYoutubeUrl(e.target.value)}
+            placeholder="https://www.youtube.com/watch?v=..."
+            className={inputClass}
+          />
+          <p className="mt-1.5 text-[11px] text-ink-faint">
+            Reads the video&apos;s captions/transcript (free — no video download). Only
+            works if the video has captions available; may occasionally fail if YouTube
+            blocks the request.
+          </p>
         </div>
       )}
       {mode === "media" && (
@@ -201,7 +233,9 @@ export function SmartAssistant() {
         <p className="text-xs text-ink-faint">
           {mode === "media"
             ? "Transcribing your file — this can take up to a minute."
-            : "This can take up to a minute for longer pages — please wait."}
+            : mode === "youtube"
+              ? "Fetching captions and summarizing — this can take up to a minute."
+              : "This can take up to a minute for longer pages — please wait."}
         </p>
       )}
 
