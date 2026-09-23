@@ -51,7 +51,8 @@ export async function POST(request: Request) {
       truncated,
       pageCount: result.total,
     });
-  } catch {
+  } catch (err) {
+    console.error("PDF extraction error:", err);
     return NextResponse.json(
       { error: "Couldn't read that PDF. It may be corrupted or password-protected." },
       { status: 422 },
