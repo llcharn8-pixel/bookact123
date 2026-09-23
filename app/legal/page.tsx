@@ -65,6 +65,38 @@ export default function LegalPage() {
         </p>
       </Section>
 
+      <Section title="Known limits">
+        <p>The app has the following technical limits:</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Text/markdown upload: 2MB file size, first 20,000 characters kept.</li>
+          <li>PDF upload: 4MB file size, first 20,000 extracted characters kept.</li>
+          <li>
+            Audio/video upload (Smart Assistant): 4MB file size — short clips only (roughly a
+            couple minutes of audio, or a very short video).
+          </li>
+          <li>Reading a URL: the first 6,000 characters of the page&apos;s text are read.</li>
+          <li>
+            Daily AI usage: 10 AI actions per day per account, shared across &quot;Suggest key
+            points&quot;, Smart Assistant, Discover, and audio/video transcription. Resets at
+            midnight UTC.
+          </li>
+          <li>Discover recommendations: 5, 10, or 20 results per request, in one of 13 languages.</li>
+          <li>
+            AI requests: each call can take up to about a minute; the app retries automatically
+            a couple of times if the AI provider is temporarily overloaded before giving up.
+          </li>
+          <li>
+            Login sessions: handled by Supabase and refresh automatically while you&apos;re
+            active. There&apos;s no fixed logout duration — you stay signed in until you log
+            out or clear your browser&apos;s cookies.
+          </li>
+          <li>
+            YouTube video reading is not currently available — YouTube blocks caption downloads
+            from this app&apos;s hosting provider.
+          </li>
+        </ul>
+      </Section>
+
       <Section title="Not professional advice">
         <p>
           Nothing in ReadAct — including AI-generated summaries, action steps, or book
