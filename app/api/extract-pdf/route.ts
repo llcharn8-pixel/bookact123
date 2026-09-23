@@ -4,7 +4,9 @@ import { getCurrentUserId } from "@/lib/data/entries";
 
 export const maxDuration = 60;
 
-const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15MB
+// Vercel serverless functions hard-cap request bodies at 4.5MB (not
+// configurable) — stay safely under that.
+const MAX_FILE_BYTES = 4 * 1024 * 1024; // 4MB
 const MAX_TEXT_CHARS = 20000;
 const MIN_MEANINGFUL_CHARS = 40;
 
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Only .pdf files are supported here." }, { status: 400 });
   }
   if (file.size > MAX_FILE_BYTES) {
-    return NextResponse.json({ error: "That file is too large (max 15MB)." }, { status: 400 });
+    return NextResponse.json({ error: "That file is too large (max 4MB)." }, { status: 400 });
   }
 
   const bytes = new Uint8Array(await file.arrayBuffer());

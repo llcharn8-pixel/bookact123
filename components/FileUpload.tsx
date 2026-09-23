@@ -9,7 +9,9 @@ const inputClass =
 const labelClass = "mb-1 block text-xs font-medium text-ink-soft";
 
 const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2MB
-const MAX_PDF_BYTES = 15 * 1024 * 1024; // 15MB
+// Vercel serverless functions hard-cap request bodies at 4.5MB (not
+// configurable) — stay safely under that.
+const MAX_PDF_BYTES = 4 * 1024 * 1024; // 4MB
 const MAX_TEXT_CHARS = 20000;
 const TEXT_EXTENSIONS = [".txt", ".md", ".markdown"];
 const ACCEPTED_EXTENSIONS = [...TEXT_EXTENSIONS, ".pdf"];
@@ -68,7 +70,7 @@ export function FileUpload() {
 
     if (lowerName.endsWith(".pdf")) {
       if (file.size > MAX_PDF_BYTES) {
-        setFileError("That PDF is too large (max 15MB).");
+        setFileError("That PDF is too large (max 4MB).");
         return;
       }
       setExtracting(true);
@@ -76,8 +78,14 @@ export function FileUpload() {
         const body = new FormData();
         body.append("file", file);
         const res = await fetch("/api/extract-pdf", { method: "POST", body });
-        const data = await res.json();
-        if (!res.ok) {
+        let data: { text?: string; truncated?: boolean; error?: string };
+        try {
+          data = await res.json();
+        } catch {
+          setFileError("Couldn't read that PDF (the file may be too large). Try again.");
+          return;
+        }
+        if (!res.ok || !data.text) {
           setFileError(data.error ?? "Couldn't read that PDF.");
           return;
         }
