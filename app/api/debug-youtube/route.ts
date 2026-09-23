@@ -15,6 +15,9 @@ export async function GET(request: Request) {
   const hasCaptionTracks = html.includes('"captionTracks"');
   const hasConsent = /consent\.youtube\.com|Before you continue to YouTube/i.test(html);
   const hasCaptcha = /unusual traffic|g-recaptcha/i.test(html);
+  const hasPlayerResponse = html.includes("ytInitialPlayerResponse");
+  const hasCaptionsRenderer = html.includes("playerCaptionsTracklistRenderer");
+  const hasCaptionsWord = html.includes("captions");
 
   let transcriptResult: { ok: boolean; length?: number; sample?: string; error?: string };
   try {
@@ -24,12 +27,20 @@ export async function GET(request: Request) {
     transcriptResult = { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
 
+  const playerResponseIdx = html.indexOf("ytInitialPlayerResponse");
+  const playerResponseSnippet =
+    playerResponseIdx >= 0 ? html.slice(playerResponseIdx, playerResponseIdx + 500) : null;
+
   return NextResponse.json({
     status: res.status,
     htmlLength: html.length,
     hasCaptionTracks,
     hasConsent,
     hasCaptcha,
+    hasPlayerResponse,
+    hasCaptionsRenderer,
+    hasCaptionsWord,
+    playerResponseSnippet,
     htmlSnippet: html.slice(0, 300),
     transcriptResult,
   });
