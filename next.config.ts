@@ -25,10 +25,6 @@ const nextConfig: NextConfig = {
       "./node_modules/@napi-rs/**/*",
       "./node_modules/pdfjs-dist/**/*",
     ],
-    "/api/debug-pdf": [
-      "./node_modules/@napi-rs/**/*",
-      "./node_modules/pdfjs-dist/**/*",
-    ],
   },
 };
 
