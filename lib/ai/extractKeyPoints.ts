@@ -1,4 +1,5 @@
 import type { DraftKeyPoint } from "@/lib/types";
+import { GeminiError, callGemini } from "@/lib/ai/gemini";
 
 const SYSTEM_PROMPT = `You extract structured, actionable notes from a reader's summary of a book or article.
 
@@ -33,33 +34,25 @@ export async function extractKeyPoints(
     throw new ExtractionError("AI extraction is not configured.");
   }
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-goog-api-key": apiKey,
+  let data: unknown;
+  try {
+    data = await callGemini(apiKey, GEMINI_MODEL, {
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: [{ role: "user", parts: [{ text: summary }] }],
+      generationConfig: {
+        responseMimeType: "application/json",
+        maxOutputTokens: 4096,
       },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: [{ role: "user", parts: [{ text: summary }] }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          maxOutputTokens: 4096,
-        },
-      }),
-    },
-  );
-
-  if (!response.ok) {
-    const body = await response.text();
-    console.error("Gemini API error:", response.status, body);
-    throw new ExtractionError(`AI request failed (${response.status}).`);
+    });
+  } catch (err) {
+    throw new ExtractionError(
+      err instanceof GeminiError ? err.message : "Couldn't reach the AI service. Try again.",
+    );
   }
 
-  const data = await response.json();
-  const text: string | undefined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const text: string | undefined = (
+    data as { candidates?: { content?: { parts?: { text?: string }[] } }[] }
+  )?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new ExtractionError("AI returned an empty response.");
 
   let parsed: unknown;

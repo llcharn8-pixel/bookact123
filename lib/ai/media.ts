@@ -1,5 +1,6 @@
 import type { DraftEntry } from "@/lib/types";
 import { AssistantError, JSON_SHAPE, parseDraftEntry } from "@/lib/ai/assistant";
+import { GeminiError, callGemini } from "@/lib/ai/gemini";
 
 const GEMINI_MODEL = "gemini-3.6-flash";
 
@@ -26,48 +27,39 @@ export async function transcribeMedia(
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 55000);
 
-  let response: Response;
+  let data: unknown;
   try {
-    response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+    data = await callGemini(
+      apiKey,
+      GEMINI_MODEL,
       {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
-          "content-type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ inlineData: { mimeType, data: base64Data } }, { text: PROMPT }],
-            },
-          ],
-          generationConfig: {
-            responseMimeType: "application/json",
-            maxOutputTokens: 4096,
+        contents: [
+          {
+            role: "user",
+            parts: [{ inlineData: { mimeType, data: base64Data } }, { text: PROMPT }],
           },
-        }),
+        ],
+        generationConfig: {
+          responseMimeType: "application/json",
+          maxOutputTokens: 4096,
+        },
       },
+      controller.signal,
     );
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
       throw new AssistantError("Transcription took too long. Try a shorter clip.");
     }
-    throw new AssistantError("Couldn't reach the transcription service. Try again.");
+    throw new AssistantError(
+      err instanceof GeminiError ? err.message : "Couldn't reach the transcription service. Try again.",
+    );
   } finally {
     clearTimeout(timeout);
   }
 
-  if (!response.ok) {
-    const body = await response.text();
-    console.error("Gemini media transcription error:", response.status, body);
-    throw new AssistantError(`Transcription failed (${response.status}).`);
-  }
-
-  const data = await response.json();
-  const text: string | undefined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const text: string | undefined = (
+    data as { candidates?: { content?: { parts?: { text?: string }[] } }[] }
+  )?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new AssistantError("Transcription returned an empty response.");
 
   return parseDraftEntry(text, true);
