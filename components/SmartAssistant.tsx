@@ -151,15 +151,6 @@ export function SmartAssistant() {
         >
           Audio/video
         </button>
-        <button
-          type="button"
-          onClick={() => setMode("youtube")}
-          className={`rounded-full px-3 py-1.5 font-medium transition-colors ${
-            mode === "youtube" ? "bg-gold text-white" : "text-ink-soft hover:bg-gold-soft"
-          }`}
-        >
-          YouTube
-        </button>
       </div>
 
       {mode === "url" && (
