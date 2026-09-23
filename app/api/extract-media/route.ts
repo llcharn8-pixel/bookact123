@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentUserId } from "@/lib/data/entries";
 import { AssistantError } from "@/lib/ai/assistant";
 import { transcribeMedia } from "@/lib/ai/media";
-import { AI_LIMIT_MESSAGE, checkAiQuota } from "@/lib/ai/usageGuard";
+import { GEMINI_AI_LIMIT_MESSAGE, checkGeminiAiQuota } from "@/lib/ai/usageGuard";
 
 export const maxDuration = 60;
 
@@ -20,9 +20,9 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createClient();
-  const quota = await checkAiQuota(supabase, userId);
+  const quota = await checkGeminiAiQuota(supabase, userId);
   if (!quota.allowed) {
-    return NextResponse.json({ error: AI_LIMIT_MESSAGE }, { status: 429 });
+    return NextResponse.json({ error: GEMINI_AI_LIMIT_MESSAGE }, { status: 429 });
   }
 
   const formData = await request.formData();

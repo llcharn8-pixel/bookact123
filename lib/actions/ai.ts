@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { extractKeyPoints, ExtractionError } from "@/lib/ai/extractKeyPoints";
-import { AI_LIMIT_MESSAGE, checkAiQuota } from "@/lib/ai/usageGuard";
+import { GEMINI_AI_LIMIT_MESSAGE, checkGeminiAiQuota } from "@/lib/ai/usageGuard";
 import type { DraftKeyPoint } from "@/lib/types";
 
 export type SuggestResult =
@@ -24,8 +24,8 @@ export async function suggestKeyPoints(
     return { error: "This entry has no summary text to extract from." };
   }
 
-  const quota = await checkAiQuota(supabase, user.id);
-  if (!quota.allowed) return { error: AI_LIMIT_MESSAGE };
+  const quota = await checkGeminiAiQuota(supabase, user.id);
+  if (!quota.allowed) return { error: GEMINI_AI_LIMIT_MESSAGE };
 
   let drafts: DraftKeyPoint[];
   try {

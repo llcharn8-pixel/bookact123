@@ -31,8 +31,10 @@ export default async function RootLayout({
           <Sidebar
             userEmail={user?.email ?? null}
             streak={streak}
-            aiRemaining={aiUsage?.remaining ?? null}
-            aiLimit={aiUsage?.limit ?? null}
+            aiGeneralRemaining={aiUsage?.general.remaining ?? null}
+            aiGeneralLimit={aiUsage?.general.limit ?? null}
+            aiGeminiRemaining={aiUsage?.gemini.remaining ?? null}
+            aiGeminiLimit={aiUsage?.gemini.limit ?? null}
             reviewDue={reviewDue}
           />
           <main className="flex-1 min-w-0">{children}</main>

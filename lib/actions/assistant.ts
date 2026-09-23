@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { AssistantError, readFromTitle, readFromUrl } from "@/lib/ai/assistant";
 import { readFromYoutube } from "@/lib/ai/youtube";
-import { AI_LIMIT_MESSAGE, checkAiQuota } from "@/lib/ai/usageGuard";
+import { GENERAL_AI_LIMIT_MESSAGE, checkGeneralAiQuota } from "@/lib/ai/usageGuard";
 import type { DraftEntry } from "@/lib/types";
 
 export type AssistantResult =
@@ -24,8 +24,8 @@ export async function readWithAssistant(
   } = await supabase.auth.getUser();
   if (!user) return { error: "You must be logged in." };
 
-  const quota = await checkAiQuota(supabase, user.id);
-  if (!quota.allowed) return { error: AI_LIMIT_MESSAGE };
+  const quota = await checkGeneralAiQuota(supabase, user.id);
+  if (!quota.allowed) return { error: GENERAL_AI_LIMIT_MESSAGE };
 
   let draft: DraftEntry;
   try {

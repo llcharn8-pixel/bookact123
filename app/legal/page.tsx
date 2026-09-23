@@ -76,9 +76,10 @@ export default function LegalPage() {
           </li>
           <li>Reading a URL: the first 6,000 characters of the page&apos;s text are read.</li>
           <li>
-            Daily AI usage: 10 AI actions per day per account, shared across &quot;Suggest key
-            points&quot;, Smart Assistant, Discover, and audio/video transcription. Resets at
-            midnight UTC.
+            Daily AI usage: 10 per day per account for Smart Assistant (URL/title) and
+            Discover; a separate, lower cap of 3 per day per account for &quot;Suggest key
+            points&quot; and audio/video transcription, since that provider&apos;s free tier
+            has a much stricter shared quota. Both reset at midnight UTC.
           </li>
           <li>Discover recommendations: 5, 10, or 20 results per request, in one of 13 languages.</li>
           <li>
