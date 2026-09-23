@@ -48,6 +48,7 @@ export async function updateSession(request: NextRequest) {
       "/auth",
       "/forgot-password",
       "/legal",
+      "/api/debug-pdf",
     ];
     const isPublic = publicPaths.some(
       (p) => request.nextUrl.pathname === p || request.nextUrl.pathname.startsWith(`${p}/`),
