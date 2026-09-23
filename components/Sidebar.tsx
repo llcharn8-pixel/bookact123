@@ -8,6 +8,7 @@ import { signOut } from "@/lib/actions/auth";
 const links = [
   { href: "/", label: "Entries" },
   { href: "/actions", label: "All Actions" },
+  { href: "/review", label: "Review" },
   { href: "/stats", label: "Progress" },
   { href: "/discover", label: "Discover" },
   { href: "/activity", label: "Activity" },
@@ -19,11 +20,13 @@ export function Sidebar({
   streak,
   aiRemaining,
   aiLimit,
+  reviewDue,
 }: {
   userEmail: string | null;
   streak: number;
   aiRemaining: number | null;
   aiLimit: number | null;
+  reviewDue: number;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -64,13 +67,22 @@ export function Sidebar({
             key={link.href}
             href={link.href}
             onClick={() => setOpen(false)}
-            className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
               active
                 ? "bg-primary text-white"
                 : "text-forest-ink/80 hover:bg-forest-soft hover:text-forest-ink"
             }`}
           >
-            {link.label}
+            <span>{link.label}</span>
+            {link.href === "/review" && reviewDue > 0 && (
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                  active ? "bg-white/20 text-white" : "bg-gold-soft text-gold"
+                }`}
+              >
+                {reviewDue}
+              </span>
+            )}
           </Link>
         );
       })}

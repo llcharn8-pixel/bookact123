@@ -20,6 +20,8 @@ export type KeyPoint = {
   content: string;
   source: Source;
   ai_confidence: number | null;
+  review_count: number;
+  last_reviewed_at: string | null;
   created_at: string;
 };
 
@@ -66,6 +68,10 @@ export type DraftEntry = {
 };
 
 export type KeyPointWithActions = KeyPoint & { action_steps: ActionStep[] };
+export type KeyPointForReview = KeyPointWithActions & {
+  entry_title: string;
+  entry_author: string | null;
+};
 export type EntryWithDetails = Entry & { key_points: KeyPointWithActions[] };
 
 export type ActionStepWithContext = ActionStep & {

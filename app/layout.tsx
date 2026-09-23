@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { getUserStreak } from "@/lib/data/entries";
 import { getAiUsageToday } from "@/lib/ai/usageGuard";
+import { getDueReviewCount } from "@/lib/data/review";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default async function RootLayout({
   } = await supabase.auth.getUser();
   const streak = user ? await getUserStreak() : 0;
   const aiUsage = user ? await getAiUsageToday() : null;
+  const reviewDue = user ? await getDueReviewCount() : 0;
 
   return (
     <html lang="en">
@@ -31,6 +33,7 @@ export default async function RootLayout({
             streak={streak}
             aiRemaining={aiUsage?.remaining ?? null}
             aiLimit={aiUsage?.limit ?? null}
+            reviewDue={reviewDue}
           />
           <main className="flex-1 min-w-0">{children}</main>
         </div>
