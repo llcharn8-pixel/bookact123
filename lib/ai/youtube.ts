@@ -35,7 +35,7 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
 }
 
-async function fetchTranscriptText(videoId: string): Promise<string> {
+export async function fetchTranscriptText(videoId: string): Promise<string> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
   let html: string;
