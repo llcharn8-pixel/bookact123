@@ -14,6 +14,16 @@ const nextConfig: NextConfig = {
   // serverExternalPackages tells Next.js to skip bundling these and
   // require() them directly from node_modules at runtime instead.
   serverExternalPackages: ["pdf-parse", "pdfjs-dist", "@napi-rs/canvas"],
+  // Being external means Next.js's file tracer must independently detect
+  // and copy these into the deployed function output — it can't, because
+  // pdfjs-dist's require of @napi-rs/canvas is inside a try/catch, invisible
+  // to static tracing. Force-include the whole @napi-rs scope so whichever
+  // platform-specific native binary Vercel's own npm install resolved
+  // (e.g. @napi-rs/canvas-linux-x64-gnu) actually ships with the function.
+  outputFileTracingIncludes: {
+    "/api/extract-pdf": ["./node_modules/@napi-rs/**/*"],
+    "/api/debug-pdf": ["./node_modules/@napi-rs/**/*"],
+  },
 };
 
 export default nextConfig;
